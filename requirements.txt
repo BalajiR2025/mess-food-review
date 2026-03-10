@@ -1,0 +1,1 @@
+This creates a `requirements.txt` file — anyone can recreate your environment with `pip install -r requirements.txt`.
