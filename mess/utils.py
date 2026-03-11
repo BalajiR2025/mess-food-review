@@ -1,5 +1,6 @@
 from django.utils import timezone
 from .models import WeeklyMenu, MenuOverride
+from datetime import time
 
 def get_todays_menu():
     today = timezone.now().date()
@@ -7,8 +8,6 @@ def get_todays_menu():
     
     meals = {}
     for meal_type in ['breakfast', 'lunch', 'snacks', 'dinner']:
-
-        # Check if there's an override for today first
         override = MenuOverride.objects.filter(
             date=today, meal_type=meal_type
         ).first()
@@ -17,10 +16,9 @@ def get_todays_menu():
             meals[meal_type] = {
                 'name': override.name,
                 'description': override.description,
-                'is_override': True,   # we can show a "special menu" badge
+                'is_override': True,
             }
         else:
-            # Fall back to weekly schedule
             weekly = WeeklyMenu.objects.filter(
                 day_of_week=day_of_week, meal_type=meal_type
             ).first()
@@ -32,6 +30,32 @@ def get_todays_menu():
                     'is_override': False,
                 }
             else:
-                meals[meal_type] = None  # no menu set
+                meals[meal_type] = None
 
     return today, meals
+
+
+# Meal timing windows
+MEAL_TIMES = {
+    'breakfast': (time(7, 0),  time(10, 30)),
+    'lunch':     (time(12, 0), time(14, 30)),
+    'snacks':    (time(16, 0), time(18, 30)),
+    'dinner':    (time(19, 0), time(21, 30)),
+}
+
+def get_meal_status(meal_type):
+    """
+    Returns:
+      'upcoming'  → before meal time
+      'open'      → rating window is open
+      'closed'    → meal time passed
+    """
+    now = timezone.localtime(timezone.now()).time()
+    start, end = MEAL_TIMES.get(meal_type, (time(0, 0), time(23, 59)))
+
+    if now < start:
+        return 'upcoming', start.strftime('%I:%M %p')
+    elif start <= now <= end:
+        return 'open', end.strftime('%I:%M %p')
+    else:
+        return 'closed', None
