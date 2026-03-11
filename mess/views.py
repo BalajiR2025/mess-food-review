@@ -78,3 +78,41 @@ def rate_meal(request, meal_type):
         'today': today,
         'already_rated': already_rated,
     })
+
+import json
+from datetime import timedelta
+
+def weekly_trend(request):
+    today = timezone.now().date()
+    last_7_days = [today - timedelta(days=i) for i in range(6, -1, -1)]
+    
+    # Labels for x-axis e.g. "Mon 10", "Tue 11"
+    labels = [d.strftime('%a %d') for d in last_7_days]
+
+    meal_colors = {
+        'breakfast': 'rgba(255, 159, 64, 0.8)',
+        'lunch':     'rgba(54, 162, 235, 0.8)',
+        'snacks':    'rgba(153, 102, 255, 0.8)',
+        'dinner':    'rgba(75, 192, 192, 0.8)',
+    }
+
+    datasets = []
+    for meal_type in ['breakfast', 'lunch', 'snacks', 'dinner']:
+        data = []
+        for day in last_7_days:
+            ratings = Rating.objects.filter(meal_type=meal_type, date=day)
+            avg = ratings.aggregate(Avg('stars'))['stars__avg']
+            data.append(round(avg, 1) if avg else 0)
+
+        datasets.append({
+            'label': meal_type.capitalize(),
+            'data': data,
+            'backgroundColor': meal_colors[meal_type],
+            'borderRadius': 6,
+        })
+
+    return render(request, 'mess/weekly_trend.html', {
+        'labels': json.dumps(labels),
+        'datasets': json.dumps(datasets),
+        'today': today,
+    })

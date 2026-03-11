@@ -1,0 +1,81 @@
+{% extends 'mess/base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0">📊 Weekly Rating Trend</h4>
+  <a href="/" class="btn btn-outline-secondary btn-sm">← Back to Menu</a>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <canvas id="weeklyChart" height="100"></canvas>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<h5 class="mt-4 mb-3">📋 Meal Summary (Last 7 Days)</h5>
+<div class="row g-3" id="summaryCards"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = {{ labels|safe }};
+  const datasets = {{ datasets|safe }};
+
+  // Draw Chart
+  const ctx = document.getElementById('weeklyChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: {
+          display: true,
+          text: 'Average Meal Ratings — Last 7 Days'
+        }
+      },
+      scales: {
+        y: {
+          min: 0,
+          max: 5,
+          ticks: { stepSize: 1 },
+          title: { display: true, text: 'Average Stars' }
+        },
+        x: {
+          title: { display: true, text: 'Date' }
+        }
+      }
+    }
+  });
+
+  // Summary Cards
+  const mealEmojis = {
+    'Breakfast': '🌅', 'Lunch': '☀️', 'Snacks': '🍵', 'Dinner': '🌙'
+  };
+
+  const summaryDiv = document.getElementById('summaryCards');
+  datasets.forEach(ds => {
+    const nonZero = ds.data.filter(v => v > 0);
+    const avg = nonZero.length
+      ? (nonZero.reduce((a, b) => a + b, 0) / nonZero.length).toFixed(1)
+      : 'N/A';
+
+    const best = nonZero.length ? Math.max(...nonZero) : 'N/A';
+    const worst = nonZero.length ? Math.min(...nonZero) : 'N/A';
+
+    summaryDiv.innerHTML += `
+      <div class="col-md-3 col-6">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <div style="font-size:2rem">${mealEmojis[ds.label] || '🍽️'}</div>
+            <h6 class="mt-2">${ds.label}</h6>
+            <div class="badge bg-success mb-1">Avg: ⭐ ${avg}</div><br>
+            <small class="text-muted">Best: ${best} | Worst: ${worst}</small>
+          </div>
+        </div>
+      </div>`;
+  });
+</script>
+
+{% endblock %}

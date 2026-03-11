@@ -16,9 +16,12 @@
 </head>
 <body>
   <nav class="navbar navbar-dark bg-dark px-4 mb-4">
-    <a class="navbar-brand" href="/">🍽️ Mess Food Review</a>
+  <a class="navbar-brand" href="/">🍽️ Mess Food Review</a>
+  <div class="d-flex align-items-center gap-3">
+    <a href="/weekly/" class="btn btn-outline-light btn-sm">📊 Weekly Trend</a>
     <span class="text-secondary">{{ today }}</span>
-  </nav>
+  </div>
+</nav>
 
   <div class="container">
     {% block content %}{% endblock %}
