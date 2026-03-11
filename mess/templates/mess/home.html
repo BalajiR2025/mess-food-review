@@ -1,37 +1,35 @@
 {% extends 'mess/base.html' %}
 {% block content %}
 
-<h4 class="mb-4 text-secondary">📅 Today's Menu — <strong class="text-dark">{{ today }}</strong></h4>
+<!-- Page Title Bar -->
+<div class="page-title">
+  <div>
+    <h5 class="mb-0 fw-700">📅 Today's Menu</h5>
+    <small class="text-muted">{{ today|date:"l, F j, Y" }}</small>
+  </div>
+  <span class="badge bg-primary">Live Ratings</span>
+</div>
 
 {% for meal_type in meal_order %}
-  <div class="mb-5">
+<div class="mb-5">
 
-    <!-- Meal Header -->
-    {% if meal_type == 'breakfast' %} <h4>🌅 Breakfast</h4>
-    {% elif meal_type == 'lunch' %}   <h4>☀️ Lunch</h4>
-    {% elif meal_type == 'snacks' %}  <h4>🍵 Snacks</h4>
-    {% elif meal_type == 'dinner' %}  <h4>🌙 Dinner</h4>
+  <!-- Meal Header -->
+  <div class="meal-header">
+    {% if meal_type == 'breakfast' %}<h4>🌅 Breakfast</h4>
+    {% elif meal_type == 'lunch' %}  <h4>☀️ Lunch</h4>
+    {% elif meal_type == 'snacks' %} <h4>🍵 Snacks</h4>
+    {% elif meal_type == 'dinner' %} <h4>🌙 Dinner</h4>
     {% endif %}
-    <hr class="mt-1">
-
-    {% with data=meal_data|default_if_none:'' %}
-    {% with data=meal_data %}
-
-    {% if meal_data %}
-      {% with item=meal_data|dictsort:meal_type %}
-      {% endwith %}
-    {% endif %}
-
-    {% endwith %}
-    {% endwith %}
-
-    {% if meal_type == 'breakfast' %}{% with data=meal_data.breakfast %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
-    {% elif meal_type == 'lunch' %}{% with data=meal_data.lunch %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
-    {% elif meal_type == 'snacks' %}{% with data=meal_data.snacks %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
-    {% elif meal_type == 'dinner' %}{% with data=meal_data.dinner %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
-    {% endif %}
-
+    <div class="meal-divider"></div>
   </div>
+
+  {% if meal_type == 'breakfast' %}{% with data=meal_data.breakfast %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
+  {% elif meal_type == 'lunch' %}{% with data=meal_data.lunch %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
+  {% elif meal_type == 'snacks' %}{% with data=meal_data.snacks %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
+  {% elif meal_type == 'dinner' %}{% with data=meal_data.dinner %}{% include 'mess/meal_card.html' with data=data meal_type=meal_type %}{% endwith %}
+  {% endif %}
+
+</div>
 {% endfor %}
 
 {% endblock %}
