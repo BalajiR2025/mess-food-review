@@ -1,8 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Mobile Optimized -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mess Review">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="/static/manifest.json">
   <title>🍽️ Mess Food Review</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -101,6 +110,71 @@
       justify-content: space-between;
       align-items: center;
     }
+
+    /* ===== MOBILE STYLES ===== */
+@media (max-width: 576px) {
+
+  /* Navbar */
+  .navbar { padding: 10px 16px; }
+  .navbar-brand { font-size: 1.1rem; }
+  .college-name { display: none; }
+
+  /* Cards */
+  .meal-card { border-radius: 10px; }
+  .card-body { padding: 14px 16px !important; }
+
+  /* Meal name */
+  .card-body h5 { font-size: 1rem; }
+
+  /* Buttons - bigger tap area */
+  .btn-sm { padding: 8px 14px !important; font-size: 0.85rem; }
+  .btn-lg { padding: 14px !important; font-size: 1rem; }
+
+  /* Hide date in navbar on small screens */
+  .text-white-50 { display: none; }
+
+  /* Bottom padding so content doesn't hide behind bottom nav */
+  .container { padding-bottom: 80px !important; }
+}
+
+/* ===== BOTTOM NAVBAR (Mobile only) ===== */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1a1a2e;
+  padding: 10px 0 14px;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}
+.bottom-nav a {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  transition: color 0.2s;
+}
+.bottom-nav a.active,
+.bottom-nav a:hover { color: white; }
+.bottom-nav .nav-icon { font-size: 1.3rem; }
+
+@media (max-width: 768px) {
+  .bottom-nav { display: flex; }
+  /* Hide top Weekly Trend button on mobile since bottom nav handles it */
+  .top-weekly-btn { display: none; }
+}
+
+@media (max-width: 576px) {
+  select.form-select-lg { font-size: 0.95rem !important; }
+  textarea { font-size: 0.95rem !important; }
+  input.form-control-lg { font-size: 0.95rem !important; }
+}
   </style>
 </head>
 <body>
@@ -112,7 +186,7 @@
       <div class="college-name ps-1">Your College Name — Hostel Mess</div>
     </div>
     <div class="d-flex align-items-center gap-3">
-      <a href="/weekly/" class="btn btn-sm btn-outline-light">📊 Weekly Trend</a>
+      <a href="/weekly/" class="btn btn-sm btn-outline-light top-weekly-btn">📊 Weekly Trend</a>
       <span class="text-white-50 small d-none d-md-block">{{ today }}</span>
     </div>
   </nav>
@@ -128,5 +202,20 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Mobile Bottom Navigation -->
+<div class="bottom-nav">
+  <a href="/" class="{% block nav_home %}{% endblock %}">
+    <span class="nav-icon">🍽️</span>
+    <span>Menu</span>
+  </a>
+  <a href="/weekly/" class="{% block nav_trend %}{% endblock %}">
+    <span class="nav-icon">📊</span>
+    <span>Trends</span>
+  </a>
+  <a href="/admin/" target="_blank">
+    <span class="nav-icon">⚙️</span>
+    <span>Admin</span>
+  </a>
+</div>
 </body>
 </html>

@@ -1,52 +1,84 @@
 {% extends 'mess/base.html' %}
+{% block nav_trend %}active{% endblock %}
 {% block content %}
 
-<div class="page-title">
-  <div>
-    <h5 class="mb-0">📊 Weekly Rating Trend</h5>
-    <small class="text-muted">Last 7 days overview</small>
+<!-- Page Title -->
+<div class="card meal-card mb-4">
+  <div class="card-body px-4 py-3 d-flex justify-content-between align-items-center">
+    <div>
+      <h5 class="mb-0" style="font-weight:700;">📊 Weekly Rating Trend</h5>
+      <small class="text-muted">Last 7 days overview</small>
+    </div>
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Back</a>
   </div>
-  <a href="/" class="btn btn-outline-secondary btn-sm">← Back to Menu</a>
 </div>
 
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <canvas id="weeklyChart" height="100"></canvas>
+<!-- Chart Card -->
+<div class="card meal-card mb-4">
+  <div class="card-body p-2 p-md-4">
+    <div style="position:relative; width:100%; height:280px;">
+      <canvas id="weeklyChart"></canvas>
+    </div>
   </div>
 </div>
 
 <!-- Summary Cards -->
-<h5 class="mt-4 mb-3">📋 Meal Summary (Last 7 Days)</h5>
-<div class="row g-3" id="summaryCards"></div>
+<h6 class="mb-3" style="font-weight:600;">📋 Meal Summary (Last 7 Days)</h6>
+<div class="row g-2 g-md-3" id="summaryCards"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const labels = {{ labels|safe }};
   const datasets = {{ datasets|safe }};
 
-  // Draw Chart
   const ctx = document.getElementById('weeklyChart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: { labels, datasets },
     options: {
       responsive: true,
+      maintainAspectRatio: false,   // ← key fix for mobile
       plugins: {
-        legend: { position: 'top' },
+        legend: {
+          position: 'bottom',       // ← moves legend below on mobile
+          labels: {
+            boxWidth: 12,
+            font: { size: 11 }
+          }
+        },
         title: {
           display: true,
-          text: 'Average Meal Ratings — Last 7 Days'
+          text: 'Average Meal Ratings — Last 7 Days',
+          font: { size: 13 }
         }
       },
       scales: {
         y: {
           min: 0,
           max: 5,
-          ticks: { stepSize: 1 },
-          title: { display: true, text: 'Average Stars' }
+          ticks: {
+            stepSize: 1,
+            font: { size: 10 }
+          },
+          title: {
+            display: window.innerWidth > 480,  // hide on very small screens
+            text: 'Avg Stars',
+            font: { size: 10 }
+          }
         },
         x: {
-          title: { display: true, text: 'Date' }
+          ticks: {
+            font: { size: 10 },
+            maxRotation: 45,        // ← rotate labels on mobile
+            minRotation: 0
+          }
+        }
+      },
+      // Thinner bars on mobile
+      datasets: {
+        bar: {
+          barPercentage: window.innerWidth < 480 ? 0.6 : 0.8,
+          categoryPercentage: window.innerWidth < 480 ? 0.7 : 0.9,
         }
       }
     }
@@ -63,18 +95,19 @@
     const avg = nonZero.length
       ? (nonZero.reduce((a, b) => a + b, 0) / nonZero.length).toFixed(1)
       : 'N/A';
-
-    const best = nonZero.length ? Math.max(...nonZero) : 'N/A';
-    const worst = nonZero.length ? Math.min(...nonZero) : 'N/A';
+    const best   = nonZero.length ? Math.max(...nonZero) : 'N/A';
+    const worst  = nonZero.length ? Math.min(...nonZero) : 'N/A';
 
     summaryDiv.innerHTML += `
-      <div class="col-md-3 col-6">
-        <div class="card text-center shadow-sm h-100">
-          <div class="card-body">
-            <div style="font-size:2rem">${mealEmojis[ds.label] || '🍽️'}</div>
-            <h6 class="mt-2">${ds.label}</h6>
-            <div class="badge bg-success mb-1">Avg: ⭐ ${avg}</div><br>
-            <small class="text-muted">Best: ${best} | Worst: ${worst}</small>
+      <div class="col-6 col-md-3">
+        <div class="card meal-card text-center h-100">
+          <div class="card-body py-3">
+            <div style="font-size:1.8rem">${mealEmojis[ds.label] || '🍽️'}</div>
+            <h6 class="mt-2 mb-2" style="font-size:0.9rem;font-weight:600;">${ds.label}</h6>
+            <span class="badge bg-success mb-1" style="font-size:0.8rem;">⭐ ${avg}</span>
+            <div class="text-muted" style="font-size:0.75rem; margin-top:4px;">
+              Best: ${best} &nbsp;|&nbsp; Worst: ${worst}
+            </div>
           </div>
         </div>
       </div>`;

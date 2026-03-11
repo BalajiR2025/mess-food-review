@@ -1,13 +1,16 @@
 {% extends 'mess/base.html' %}
+{% block nav_home %}active{% endblock %}
 {% block content %}
 
 <!-- Page Title Bar -->
-<div class="page-title">
-  <div>
-    <h5 class="mb-0 fw-700">📅 Today's Menu</h5>
-    <small class="text-muted">{{ today|date:"l, F j, Y" }}</small>
+<div class="card meal-card mb-4">
+  <div class="card-body px-4 py-3 d-flex justify-content-between align-items-center">
+    <div>
+      <h5 class="mb-0" style="font-weight:700;">📅 Today's Menu</h5>
+      <small class="text-muted">{{ today|date:"l, F j, Y" }}</small>
+    </div>
+    <span class="badge bg-primary">🔴 Live Ratings</span>
   </div>
-  <span class="badge bg-primary">Live Ratings</span>
 </div>
 
 {% for meal_type in meal_order %}

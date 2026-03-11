@@ -5,11 +5,11 @@
 
       <div class="flex-grow-1">
 
-        <!-- Menu Name + Special Badge -->
+        <!-- Menu Name -->
         <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-          <h5 class="mb-0 fw-600">{{ data.name }}</h5>
+          <h5 class="mb-0" style="font-weight:600;">{{ data.name }}</h5>
           {% if data.is_override %}
-            <span class="badge bg-warning text-dark" style="font-size:0.7rem">⚡ Special Today</span>
+            <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem">⚡ Special Today</span>
           {% endif %}
         </div>
 
@@ -19,26 +19,34 @@
 
         <!-- Rating -->
         {% if data.avg_rating %}
-          <span class="badge rating-badge bg-success">⭐ {{ data.avg_rating }} / 5</span>
-          <span class="text-muted small ms-2">{{ data.rating_count }} rating{{ data.rating_count|pluralize }}</span>
+          <span class="badge bg-success" style="font-size:0.85rem; padding:4px 10px; border-radius:20px;">
+            ⭐ {{ data.avg_rating }} / 5
+          </span>
+          <span class="text-muted small ms-2">
+            {{ data.rating_count }} rating{{ data.rating_count|pluralize }}
+          </span>
         {% else %}
-          <span class="badge rating-badge bg-secondary">No ratings yet</span>
+          <span class="badge bg-secondary" style="font-size:0.85rem; padding:4px 10px; border-radius:20px;">
+            No ratings yet
+          </span>
         {% endif %}
 
       </div>
 
       <!-- Action Button -->
-      <div class="ms-3 text-end">
+      <div class="ms-3 flex-shrink-0">
         {% if data.status == 'open' %}
           <a href="/rate/{{ meal_type }}/" class="btn btn-primary btn-sm px-3">
             ⭐ Rate Now
           </a>
         {% elif data.status == 'upcoming' %}
-          <button class="btn btn-sm px-3" style="background:#fff3cd;color:#856404;border:1px solid #ffc107;" disabled>
+          <button class="btn btn-sm px-3"
+            style="background:#fff3cd;color:#856404;border:1px solid #ffc107;" disabled>
             🕐 {{ data.time_info }}
           </button>
         {% elif data.status == 'closed' %}
-          <button class="btn btn-sm px-3" style="background:#f8f9fa;color:#6c757d;border:1px solid #dee2e6;" disabled>
+          <button class="btn btn-sm px-3"
+            style="background:#f8f9fa;color:#6c757d;border:1px solid #dee2e6;" disabled>
             🔒 Closed
           </button>
         {% endif %}
@@ -49,7 +57,7 @@
     <!-- Comments -->
     {% if data.comments %}
     <div class="mt-3 pt-3 border-top">
-      <p class="small text-muted mb-2 fw-500">💬 Student Comments</p>
+      <p class="small text-muted mb-2" style="font-weight:500;">💬 Student Comments</p>
       {% for c in data.comments %}
         <div class="comment-box">
           <strong>{{ c.student_name }}</strong>
