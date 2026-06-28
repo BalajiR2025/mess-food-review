@@ -48,12 +48,13 @@ class MenuOverride(models.Model):
 
 
 class Rating(models.Model):
-    """Student ratings — linked to a specific date + meal"""
     meal_type = models.CharField(max_length=20, choices=MEAL_CHOICES)
-    date = models.DateField(auto_now_add=True)      # ← add auto_now_add=True
+    date = models.DateField(auto_now_add=True)
     stars = models.IntegerField()
     comment = models.TextField(blank=True)
     student_name = models.CharField(max_length=100)
+    roll_number = models.CharField(max_length=30, blank=True)
+    room_number = models.CharField(max_length=20, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

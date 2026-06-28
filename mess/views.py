@@ -16,7 +16,6 @@ def home(request):
             ratings = Rating.objects.filter(meal_type=meal_type, date=today)
             avg = ratings.aggregate(Avg('stars'))['stars__avg']
             count = ratings.count()
-            all_comments = ratings.exclude(comment='').values('student_name', 'comment', 'stars')
 
             status, time_info = get_meal_status(meal_type)
 
@@ -26,9 +25,8 @@ def home(request):
                 'is_override': menu['is_override'],
                 'avg_rating': round(avg, 1) if avg else None,
                 'rating_count': count,
-                'comments': list(all_comments),
-                'status': status,        # 'upcoming', 'open', 'closed'
-                'time_info': time_info,  # open time or close time
+                'status': status,
+                'time_info': time_info,
             }
         else:
             meal_data[meal_type] = None
@@ -59,6 +57,8 @@ def rate_meal(request, meal_type):
         stars = int(request.POST.get('stars'))
         comment = request.POST.get('comment', '')
         student_name = request.POST.get('student_name', '').strip()
+        roll_number = request.POST.get('roll_number', '').strip()
+        room_number = request.POST.get('room_number', '').strip()
 
         if student_name and 1 <= stars <= 5:
             Rating.objects.create(
@@ -66,7 +66,9 @@ def rate_meal(request, meal_type):
                 date=today,
                 stars=stars,
                 comment=comment,
-                student_name=student_name
+                student_name=student_name,
+                roll_number=roll_number,
+                room_number=room_number,
             )
             request.session[rated_key] = True
 
