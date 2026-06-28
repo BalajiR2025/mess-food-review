@@ -1,1 +1,8 @@
-This creates a `requirements.txt` file — anyone can recreate your environment with `pip install -r requirements.txt`.
+asgiref==3.11.1
+dj-database-url==3.1.2
+Django==6.0.3
+gunicorn==26.0.0
+packaging==26.2
+sqlparse==0.5.5
+tzdata==2025.3
+whitenoise==6.12.0
